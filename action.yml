@@ -4,7 +4,7 @@ author: vltpkg
 
 branding:
   icon: search
-  color: purple
+  color: black
 
 inputs:
   query:
