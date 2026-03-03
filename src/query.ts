@@ -85,11 +85,22 @@ export async function executeQuery(
 }
 
 /**
+ * Check whether output should be shown based on the show-results setting
+ */
+function shouldShowOutput(passed: boolean, showResults: string): boolean {
+  if (showResults === 'always') return true;
+  if (showResults === 'never') return false;
+  // 'failed' (default) — show only for failed queries
+  return !passed;
+}
+
+/**
  * Execute multiple queries
  */
 export async function executeQueries(
   queries: ParsedQuery[],
-  workingDirectory?: string
+  workingDirectory?: string,
+  showResults: string = 'failed'
 ): Promise<QueryResult[]> {
   const results: QueryResult[] = [];
   
@@ -100,8 +111,21 @@ export async function executeQueries(
     // Log result
     if (result.passed) {
       core.info(`✅ ${result.query}`);
+      if (shouldShowOutput(true, showResults) && result.output && result.output.trim()) {
+        core.info(`Query output:\n${result.output}`);
+      }
     } else {
       core.error(`❌ ${result.query}: ${result.error}`);
+      if (shouldShowOutput(false, showResults)) {
+        // Show stdout so users can see what matched (e.g. expect-results failures)
+        if (result.output && result.output.trim()) {
+          core.info(`Query output:\n${result.output}`);
+        }
+        // Show stderr so users can see CLI errors (e.g. unsupported selector)
+        if (result.stderr && result.stderr.trim()) {
+          core.info(`Query stderr:\n${result.stderr}`);
+        }
+      }
     }
   }
   
@@ -111,7 +135,7 @@ export async function executeQueries(
 /**
  * Generate summary table for GitHub Actions step summary
  */
-export function generateSummaryTable(results: QueryResult[]): string {
+export function generateSummaryTable(results: QueryResult[], showResults: string = 'failed'): string {
   const lines: string[] = [];
   
   lines.push('## Query Deps Results');
@@ -147,12 +171,19 @@ export function generateSummaryTable(results: QueryResult[]): string {
       if (result.stderr) {
         lines.push(`- stderr: \`${escapeMarkdown(result.stderr)}\``);
       }
+      if (shouldShowOutput(false, showResults) && result.output && result.output.trim()) {
+        lines.push('');
+        lines.push('Output:');
+        lines.push('```');
+        lines.push(result.output);
+        lines.push('```');
+      }
       lines.push('');
     }
   }
   
   // Add output for successful queries with actual output
-  const successfulWithOutput = results.filter(r => r.passed && r.output.trim());
+  const successfulWithOutput = results.filter(r => r.passed && r.output.trim() && shouldShowOutput(true, showResults));
   if (successfulWithOutput.length > 0) {
     lines.push('### Query Outputs');
     lines.push('');
