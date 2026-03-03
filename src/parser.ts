@@ -82,26 +82,34 @@ export function parseSingleQuery(
   scope?: string,
   target?: string
 ): ParsedQuery {
-  const parsed: ParsedQuery = {
-    selector: target || query,
-    flags: [],
-  };
-  
+  // First, parse the query string to extract any inline flags
+  const parsed = parseQueryLine(query) || { selector: query, flags: [] };
+
+  // Override selector with explicit target if provided
+  if (target) parsed.selector = target;
+
+  // Explicit inputs take precedence over inline flags
   if (expectResults) {
     parsed.expectResults = expectResults;
-    parsed.flags.push(`--expect-results=${expectResults}`);
+    if (!parsed.flags.some(f => f.startsWith('--expect-results='))) {
+      parsed.flags.push(`--expect-results=${expectResults}`);
+    }
   }
-  
+
   if (view) {
     parsed.view = view;
-    parsed.flags.push(`--view=${view}`);
+    if (!parsed.flags.some(f => f.startsWith('--view='))) {
+      parsed.flags.push(`--view=${view}`);
+    }
   }
-  
+
   if (scope) {
     parsed.scope = scope;
-    parsed.flags.push(`--scope=${scope}`);
+    if (!parsed.flags.some(f => f.startsWith('--scope='))) {
+      parsed.flags.push(`--scope=${scope}`);
+    }
   }
-  
+
   return parsed;
 }
 

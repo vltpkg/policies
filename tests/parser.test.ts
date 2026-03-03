@@ -133,6 +133,75 @@ describe('parseSingleQuery', () => {
       flags: [],
     });
   });
+
+  it('should extract inline flags from query string', () => {
+    const result = parseSingleQuery('*:license(copyleft) --expect-results=0');
+    expect(result).toEqual({
+      selector: '*:license(copyleft)',
+      flags: ['--expect-results=0'],
+      expectResults: '0',
+    });
+  });
+
+  it('should extract multiple inline flags from query string', () => {
+    const result = parseSingleQuery(':outdated --expect-results=0 --view=json');
+    expect(result).toEqual({
+      selector: ':outdated',
+      flags: ['--expect-results=0', '--view=json'],
+      expectResults: '0',
+      view: 'json',
+    });
+  });
+
+  it('should let explicit expectResults override inline flag', () => {
+    const result = parseSingleQuery(
+      ':malware --expect-results=0',
+      '5',
+      undefined,
+      undefined,
+      undefined
+    );
+    expect(result.selector).toBe(':malware');
+    expect(result.expectResults).toBe('5');
+    // The inline flag is already in flags from parsing, explicit doesn't duplicate
+    expect(result.flags).toContain('--expect-results=0');
+  });
+
+  it('should let explicit view override inline flag', () => {
+    const result = parseSingleQuery(
+      ':outdated --view=json',
+      undefined,
+      'human',
+      undefined,
+      undefined
+    );
+    expect(result.selector).toBe(':outdated');
+    expect(result.view).toBe('human');
+    expect(result.flags).toContain('--view=json');
+  });
+
+  it('should not mangle complex selectors with parens and brackets', () => {
+    const result = parseSingleQuery(
+      '*:license(copyleft):not(:is([license=MIT])) --expect-results=0'
+    );
+    expect(result.selector).toBe('*:license(copyleft):not(:is([license=MIT]))');
+    expect(result.flags).toEqual(['--expect-results=0']);
+    expect(result.expectResults).toBe('0');
+  });
+
+  it('should add explicit flags when no inline flags present', () => {
+    const result = parseSingleQuery(
+      ':malware',
+      '0',
+      'json',
+      undefined,
+      undefined
+    );
+    expect(result.selector).toBe(':malware');
+    expect(result.flags).toEqual(['--expect-results=0', '--view=json']);
+    expect(result.expectResults).toBe('0');
+    expect(result.view).toBe('json');
+  });
 });
 
 describe('validateQuery', () => {
