@@ -32,6 +32,10 @@ inputs:
   working-directory:
     description: 'Working directory for running vlt query (defaults to repository root)'
     required: false
+  show-results:
+    description: 'Show query output in logs and summary when queries fail. Set to "always" to show for all queries, "never" to hide, or "failed" (default) to show only for failed queries.'
+    required: false
+    default: 'failed'
 
 outputs:
   results:

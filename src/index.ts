@@ -17,6 +17,7 @@ async function run(): Promise<void> {
     const scope = core.getInput('scope');
     const target = core.getInput('target');
     const workingDirectory = core.getInput('working-directory');
+    const showResults = core.getInput('show-results') || 'failed';
     
     // Validate inputs
     if (!query && !queries) {
@@ -55,10 +56,10 @@ async function run(): Promise<void> {
     core.info(`Executing ${parsedQueries.length} vlt queries...`);
     
     // Execute queries
-    const results = await executeQueries(parsedQueries, workingDirectory);
+    const results = await executeQueries(parsedQueries, workingDirectory, showResults);
     
     // Generate summary
-    const summary = generateSummaryTable(results);
+    const summary = generateSummaryTable(results, showResults);
     await core.summary.addRaw(summary).write();
     
     // Set outputs
