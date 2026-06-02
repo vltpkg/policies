@@ -17,7 +17,7 @@ A GitHub Action for enforcing dependency policies with vlt. Gate your CI pipelin
 - name: Setup vlt
   uses: vltpkg/setup-vlt@v1
 
-- name: Query dependencies
+- name: Enforce Dependency Policies
   uses: vltpkg/policies@v1
   with:
     queries: |
