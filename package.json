@@ -1,6 +1,6 @@
 {
   "name": "@vltpkg/policies",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "GitHub Action to gate CI with vlt dependency policies",
   "main": "dist/index.js",
   "scripts": {
@@ -16,8 +16,17 @@
     "type": "git",
     "url": "https://github.com/vltpkg/policies.git"
   },
-  "keywords": ["vlt", "github-action", "security", "dependencies", "malware", "outdated"],
-  "author": "vltpkg",
+  "keywords": [
+    "vlt",
+    "github-action",
+    "security",
+    "dependencies",
+    "malware",
+    "outdated"
+  ],
+  "author": {
+    "name": "vltpkg"
+  },
   "license": "MIT",
   "dependencies": {
     "@actions/core": "^1.10.1",
