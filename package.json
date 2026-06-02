@@ -1,6 +1,6 @@
 {
   "name": "@vltpkg/policies",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "GitHub Action to gate CI with vlt dependency policies",
   "main": "dist/index.js",
   "scripts": {
