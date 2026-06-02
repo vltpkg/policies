@@ -48,7 +48,7 @@ describe('generateSummaryTable', () => {
 
     const summary = generateSummaryTable(results);
     
-    expect(summary).toContain('## Query Deps Results');
+    expect(summary).toContain('## Policies Results');
     expect(summary).toContain('✅');
     expect(summary).toContain('malware');
     expect(summary).toContain('150ms');

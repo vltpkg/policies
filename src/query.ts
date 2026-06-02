@@ -138,7 +138,7 @@ export async function executeQueries(
 export function generateSummaryTable(results: QueryResult[], showResults: string = 'failed'): string {
   const lines: string[] = [];
   
-  lines.push('## Query Deps Results');
+  lines.push('## Policies Results');
   lines.push('');
   
   // Table header

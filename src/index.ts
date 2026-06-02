@@ -1,5 +1,5 @@
 /**
- * Main entry point for the Query Deps GitHub Action
+ * Main entry point for the Policies GitHub Action
  */
 
 import * as core from '@actions/core';

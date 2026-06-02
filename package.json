@@ -1,7 +1,7 @@
 {
-  "name": "query-deps",
+  "name": "@vltpkg/policies",
   "version": "1.0.0",
-  "description": "GitHub Action to gate CI with vlt query selectors",
+  "description": "GitHub Action to gate CI with vlt dependency policies",
   "main": "dist/index.js",
   "scripts": {
     "build": "esbuild src/index.ts --bundle --outfile=dist/index.js --platform=node --target=node20 --format=cjs --minify",
@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/vltpkg/query-deps.git"
+    "url": "https://github.com/vltpkg/policies.git"
   },
   "keywords": ["vlt", "github-action", "security", "dependencies", "malware", "outdated"],
   "author": "vltpkg",
