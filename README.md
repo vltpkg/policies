@@ -1,10 +1,10 @@
-# Query Deps
+# Policies
 
-A GitHub Action for querying dependencies with vlt. Gate your CI pipeline by checking for malware, outdated packages, license compliance, and more using powerful CSS-like selectors.
+A GitHub Action for enforcing dependency policies with vlt. Gate your CI pipeline by checking for malware, outdated packages, license compliance, and more using powerful CSS-like selectors.
 
-![Query Deps Action](https://img.shields.io/badge/Query%20Deps-by%20vlt-purple)
-[![CI](https://github.com/vltpkg/query-deps/actions/workflows/ci.yml/badge.svg)](https://github.com/vltpkg/query-deps/actions/workflows/ci.yml)
-[![Integration Tests](https://github.com/vltpkg/query-deps/actions/workflows/test.yml/badge.svg)](https://github.com/vltpkg/query-deps/actions/workflows/test.yml)
+![Policies Action](https://img.shields.io/badge/Policies-by%20vlt-purple)
+[![CI](https://github.com/vltpkg/policies/actions/workflows/ci.yml/badge.svg)](https://github.com/vltpkg/policies/actions/workflows/ci.yml)
+[![Integration Tests](https://github.com/vltpkg/policies/actions/workflows/test.yml/badge.svg)](https://github.com/vltpkg/policies/actions/workflows/test.yml)
 
 ## Quick Start
 
@@ -18,7 +18,7 @@ A GitHub Action for querying dependencies with vlt. Gate your CI pipeline by che
   uses: vltpkg/setup-vlt@v1
 
 - name: Query dependencies
-  uses: vltpkg/query-deps@v1
+  uses: vltpkg/policies@v1
   with:
     queries: |
       :malware --expect-results=0
@@ -42,7 +42,7 @@ A GitHub Action for querying dependencies with vlt. Gate your CI pipeline by che
 
 ```yaml
 - name: Security scan
-  uses: vltpkg/query-deps@v1
+  uses: vltpkg/policies@v1
   with:
     queries: |
       # Block any malware
@@ -59,7 +59,7 @@ A GitHub Action for querying dependencies with vlt. Gate your CI pipeline by che
 
 ```yaml
 - name: License compliance
-  uses: vltpkg/query-deps@v1
+  uses: vltpkg/policies@v1
   with:
     queries: |
       # No copyleft licenses allowed
@@ -76,7 +76,7 @@ A GitHub Action for querying dependencies with vlt. Gate your CI pipeline by che
 
 ```yaml
 - name: Dependency health
-  uses: vltpkg/query-deps@v1
+  uses: vltpkg/policies@v1
   with:
     queries: |
       # Check for outdated packages
@@ -93,7 +93,7 @@ A GitHub Action for querying dependencies with vlt. Gate your CI pipeline by che
 
 ```yaml
 - name: Workspace analysis
-  uses: vltpkg/query-deps@v1
+  uses: vltpkg/policies@v1
   with:
     queries: |
       # Count workspace packages
@@ -110,7 +110,7 @@ A GitHub Action for querying dependencies with vlt. Gate your CI pipeline by che
 
 ```yaml
 - name: Specific package checks
-  uses: vltpkg/query-deps@v1
+  uses: vltpkg/policies@v1
   with:
     queries: |
       # Ensure lodash is present
@@ -158,7 +158,7 @@ The `expect-results` parameter supports flexible comparisons:
 
 ## Query Selectors
 
-Query Deps uses vlt's powerful CSS-like selectors. Here are common patterns:
+Policies uses vlt's powerful CSS-like selectors. Here are common patterns:
 
 | Selector | Description |
 |----------|-------------|
@@ -185,7 +185,7 @@ For complete selector documentation, see [vlt selector docs](https://docs.vlt.sh
 
 ```yaml
 - name: License audit
-  uses: vltpkg/query-deps@v1
+  uses: vltpkg/policies@v1
   with:
     queries: |
       # Get all licenses for review
@@ -204,7 +204,7 @@ For complete selector documentation, see [vlt selector docs](https://docs.vlt.sh
 
 ```yaml
 - name: Security & quality gate
-  uses: vltpkg/query-deps@v1
+  uses: vltpkg/policies@v1
   with:
     queries: |
       # Security checks
@@ -224,7 +224,7 @@ For complete selector documentation, see [vlt selector docs](https://docs.vlt.sh
 
 ```yaml
 - name: Workspace health
-  uses: vltpkg/query-deps@v1
+  uses: vltpkg/policies@v1
   with:
     queries: |
       # Workspace structure
@@ -240,7 +240,7 @@ For complete selector documentation, see [vlt selector docs](https://docs.vlt.sh
 
 ## Error Handling
 
-Query Deps provides clear error messages:
+Policies provides clear error messages:
 
 - **vlt not installed**: Points to `vltpkg/setup-vlt@v1`
 - **Invalid selectors**: Shows vlt's error with helpful context
@@ -284,7 +284,7 @@ jobs:
         run: vlt install
       
       - name: Security audit
-        uses: vltpkg/query-deps@v1
+        uses: vltpkg/policies@v1
         with:
           queries: |
             # Block malware and vulnerabilities
@@ -300,7 +300,7 @@ jobs:
             :root > * --view=count --expect-results=<=25
       
       - name: Generate dependency report
-        uses: vltpkg/query-deps@v1
+        uses: vltpkg/policies@v1
         with:
           queries: |
             # Detailed reports (won't fail CI)
@@ -319,4 +319,4 @@ This action is licensed under the [MIT License](LICENSE).
 
 ---
 
-**Query Deps** is built by the [vlt](https://vlt.sh) team. For more vlt tools and documentation, visit [docs.vlt.sh](https://docs.vlt.sh).
+**Policies** is built by the [vlt](https://vlt.sh) team. For more vlt tools and documentation, visit [docs.vlt.sh](https://docs.vlt.sh).
