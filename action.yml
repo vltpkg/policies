@@ -1,4 +1,4 @@
-name: Policies
+name: Dependency Policies
 description: Run vlt dependency policies as CI gates — check for malware, outdated deps, license compliance, and more.
 author: vltpkg
 
