@@ -3,7 +3,7 @@ description: Run vlt dependency policies as CI gates — check for malware, outd
 author: vltpkg
 
 branding:
-  icon: search
+  icon: circle-check
   color: black
 
 inputs:
