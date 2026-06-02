@@ -18,25 +18,27 @@ jobs:
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: '20'
-          cache: 'npm'
+
+      - name: Setup vlt
+        uses: vltpkg/setup-vlt@33ed82786290f7273cdc1442ab01df5cfdd6d538 # v1
 
       - name: Install dependencies
-        run: npm ci
+        run: vlt install
 
       - name: Run tests
-        run: npm test
+        run: vlt run test
 
       - name: Run linter
-        run: npm run lint
+        run: vlt run lint
         continue-on-error: true  # Don't fail CI if no linter config yet
 
       - name: Build action
-        run: npm run build
+        run: vlt run build
 
       - name: Check dist is up to date
         run: |
           if [ -n "$(git status --porcelain dist/)" ]; then
-            echo "::error::dist/ directory is out of date. Run 'npm run build' and commit the changes."
+            echo "::error::dist/ directory is out of date. Run 'vlt run build' and commit the changes."
             git diff dist/
             exit 1
           fi
@@ -53,16 +55,18 @@ jobs:
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: '20'
-          cache: 'npm'
+
+      - name: Setup vlt
+        uses: vltpkg/setup-vlt@33ed82786290f7273cdc1442ab01df5cfdd6d538 # v1
 
       - name: Install dependencies
-        run: npm ci
+        run: vlt install
 
       - name: Build
-        run: npm run build
+        run: vlt run build
 
       - name: Package
-        run: npm pack
+        run: vlt pack
 
       - name: Upload package
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
