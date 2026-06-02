@@ -1,21 +1,10 @@
-/**
- * Unit tests for query execution
- */
+import { describe, it, beforeEach } from 'node:test';
+import assert from 'node:assert/strict';
 
 import { generateSummaryTable, setOutputs } from '../src/query';
 import { QueryResult } from '../src/query';
 
-// Mock @actions/core
-jest.mock('@actions/core', () => ({
-  info: jest.fn(),
-  error: jest.fn(),
-  debug: jest.fn(),
-  setOutput: jest.fn(),
-  summary: {
-    addRaw: jest.fn().mockReturnThis(),
-    write: jest.fn(),
-  },
-}));
+const core = require('@actions/core');
 
 describe('generateSummaryTable', () => {
   it('should generate summary for successful queries', () => {
@@ -47,12 +36,12 @@ describe('generateSummaryTable', () => {
     ];
 
     const summary = generateSummaryTable(results);
-    
-    expect(summary).toContain('## Policies Results');
-    expect(summary).toContain('✅');
-    expect(summary).toContain('malware');
-    expect(summary).toContain('150ms');
-    expect(summary).toContain('200ms');
+
+    assert.ok(summary.includes('## Policies Results'));
+    assert.ok(summary.includes('✅'));
+    assert.ok(summary.includes('malware'));
+    assert.ok(summary.includes('150ms'));
+    assert.ok(summary.includes('200ms'));
   });
 
   it('should generate summary for failed queries', () => {
@@ -74,10 +63,10 @@ describe('generateSummaryTable', () => {
     ];
 
     const summary = generateSummaryTable(results);
-    
-    expect(summary).toContain('❌');
-    expect(summary).toContain('### Failed Queries');
-    expect(summary).toContain('Expected 0 results, but got 1');
+
+    assert.ok(summary.includes('❌'));
+    assert.ok(summary.includes('### Failed Queries'));
+    assert.ok(summary.includes('Expected 0 results, but got 1'));
   });
 
   it('should include query output in failed queries section (default show-results=failed)', () => {
@@ -100,13 +89,12 @@ describe('generateSummaryTable', () => {
 
     const summary = generateSummaryTable(results);
 
-    expect(summary).toContain('### Failed Queries');
-    expect(summary).toContain('Expected 0 results, but got 3');
-    // The actual matched packages should be shown
-    expect(summary).toContain('Output:');
-    expect(summary).toContain('gpl-pkg@1.0.0');
-    expect(summary).toContain('lgpl-lib@2.3.4');
-    expect(summary).toContain('agpl-service@0.1.0');
+    assert.ok(summary.includes('### Failed Queries'));
+    assert.ok(summary.includes('Expected 0 results, but got 3'));
+    assert.ok(summary.includes('Output:'));
+    assert.ok(summary.includes('gpl-pkg@1.0.0'));
+    assert.ok(summary.includes('lgpl-lib@2.3.4'));
+    assert.ok(summary.includes('agpl-service@0.1.0'));
   });
 
   it('should show stderr in failed queries section for CLI errors', () => {
@@ -127,9 +115,9 @@ describe('generateSummaryTable', () => {
 
     const summary = generateSummaryTable(results);
 
-    expect(summary).toContain('### Failed Queries');
-    expect(summary).toContain('unsupported selector');
-    expect(summary).toContain('stderr');
+    assert.ok(summary.includes('### Failed Queries'));
+    assert.ok(summary.includes('unsupported selector'));
+    assert.ok(summary.includes('stderr'));
   });
 
   it('should show both stdout and stderr for CLI errors with partial output', () => {
@@ -150,11 +138,10 @@ describe('generateSummaryTable', () => {
 
     const summary = generateSummaryTable(results);
 
-    expect(summary).toContain('### Failed Queries');
-    expect(summary).toContain('connection reset');
-    // stdout should also be shown
-    expect(summary).toContain('Output:');
-    expect(summary).toContain('partial-result@1.0.0');
+    assert.ok(summary.includes('### Failed Queries'));
+    assert.ok(summary.includes('connection reset'));
+    assert.ok(summary.includes('Output:'));
+    assert.ok(summary.includes('partial-result@1.0.0'));
   });
 
   it('should not show output for failed queries when show-results=never', () => {
@@ -177,11 +164,10 @@ describe('generateSummaryTable', () => {
 
     const summary = generateSummaryTable(results, 'never');
 
-    expect(summary).toContain('### Failed Queries');
-    expect(summary).toContain('Expected 0 results, but got 2');
-    // Output should NOT be shown
-    expect(summary).not.toContain('gpl-pkg@1.0.0');
-    expect(summary).not.toContain('Output:');
+    assert.ok(summary.includes('### Failed Queries'));
+    assert.ok(summary.includes('Expected 0 results, but got 2'));
+    assert.ok(!summary.includes('gpl-pkg@1.0.0'));
+    assert.ok(!summary.includes('Output:'));
   });
 
   it('should show output for successful queries when show-results=always', () => {
@@ -201,9 +187,9 @@ describe('generateSummaryTable', () => {
 
     const summary = generateSummaryTable(results, 'always');
 
-    expect(summary).toContain('### Query Outputs');
-    expect(summary).toContain('```');
-    expect(summary).toContain('"name": "lodash"');
+    assert.ok(summary.includes('### Query Outputs'));
+    assert.ok(summary.includes('```'));
+    assert.ok(summary.includes('"name": "lodash"'));
   });
 
   it('should not show successful query outputs with default show-results=failed', () => {
@@ -223,13 +209,11 @@ describe('generateSummaryTable', () => {
 
     const summary = generateSummaryTable(results, 'failed');
 
-    // With 'failed' mode, successful query output should NOT be shown
-    expect(summary).not.toContain('### Query Outputs');
-    expect(summary).not.toContain('"name": "lodash"');
+    assert.ok(!summary.includes('### Query Outputs'));
+    assert.ok(!summary.includes('"name": "lodash"'));
   });
 
   it('should include query outputs for successful queries (legacy default behavior)', () => {
-    // When show-results is 'always', successful query outputs are shown
     const results: QueryResult[] = [
       {
         query: ':outdated --view=json',
@@ -245,21 +229,19 @@ describe('generateSummaryTable', () => {
     ];
 
     const summary = generateSummaryTable(results, 'always');
-    
-    expect(summary).toContain('### Query Outputs');
-    expect(summary).toContain('```');
-    expect(summary).toContain('"name": "lodash"');
+
+    assert.ok(summary.includes('### Query Outputs'));
+    assert.ok(summary.includes('```'));
+    assert.ok(summary.includes('"name": "lodash"'));
   });
 });
 
 describe('setOutputs', () => {
-  const mockSetOutput = jest.fn();
-  
+  const calls: [string, string][] = [];
+
   beforeEach(() => {
-    jest.clearAllMocks();
-    // Re-mock setOutput for each test
-    const core = require('@actions/core');
-    core.setOutput = mockSetOutput;
+    calls.length = 0;
+    core.setOutput = (name: string, value: string) => { calls.push([name, value]); };
   });
 
   it('should set outputs for successful results', () => {
@@ -281,9 +263,9 @@ describe('setOutputs', () => {
 
     setOutputs(results);
 
-    expect(mockSetOutput).toHaveBeenCalledWith('results', JSON.stringify(results));
-    expect(mockSetOutput).toHaveBeenCalledWith('passed', 'true');
-    expect(mockSetOutput).toHaveBeenCalledWith('result-0', JSON.stringify(results[0]));
+    assert.ok(calls.some(([k, v]) => k === 'results' && v === JSON.stringify(results)));
+    assert.ok(calls.some(([k, v]) => k === 'passed' && v === 'true'));
+    assert.ok(calls.some(([k, v]) => k === 'result-0' && v === JSON.stringify(results[0])));
   });
 
   it('should set outputs for failed results', () => {
@@ -306,6 +288,6 @@ describe('setOutputs', () => {
 
     setOutputs(results);
 
-    expect(mockSetOutput).toHaveBeenCalledWith('passed', 'false');
+    assert.ok(calls.some(([k, v]) => k === 'passed' && v === 'false'));
   });
 });

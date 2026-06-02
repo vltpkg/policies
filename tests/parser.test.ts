@@ -1,13 +1,12 @@
-/**
- * Unit tests for query parser
- */
+import { describe, it } from 'node:test';
+import assert from 'node:assert/strict';
 
 import { parseQueryLine, parseQueries, parseSingleQuery, validateQuery } from '../src/parser';
 
 describe('parseQueryLine', () => {
   it('should parse simple selector', () => {
     const result = parseQueryLine(':malware');
-    expect(result).toEqual({
+    assert.deepStrictEqual(result, {
       selector: ':malware',
       flags: [],
     });
@@ -15,7 +14,7 @@ describe('parseQueryLine', () => {
 
   it('should parse selector with flags', () => {
     const result = parseQueryLine(':malware --expect-results=0 --view=json');
-    expect(result).toEqual({
+    assert.deepStrictEqual(result, {
       selector: ':malware',
       flags: ['--expect-results=0', '--view=json'],
       expectResults: '0',
@@ -25,7 +24,7 @@ describe('parseQueryLine', () => {
 
   it('should parse complex selector with quoted arguments', () => {
     const result = parseQueryLine('*:license(copyleft) --scope=":root > *" --expect-results=0');
-    expect(result).toEqual({
+    assert.deepStrictEqual(result, {
       selector: '*:license(copyleft)',
       flags: ['--scope=":root > *"', '--expect-results=0'],
       scope: '":root > *"',
@@ -34,18 +33,18 @@ describe('parseQueryLine', () => {
   });
 
   it('should skip empty lines', () => {
-    expect(parseQueryLine('')).toBeNull();
-    expect(parseQueryLine('   ')).toBeNull();
+    assert.strictEqual(parseQueryLine(''), null);
+    assert.strictEqual(parseQueryLine('   '), null);
   });
 
   it('should skip comment lines', () => {
-    expect(parseQueryLine('# This is a comment')).toBeNull();
-    expect(parseQueryLine('  # Another comment')).toBeNull();
+    assert.strictEqual(parseQueryLine('# This is a comment'), null);
+    assert.strictEqual(parseQueryLine('  # Another comment'), null);
   });
 
   it('should extract target flag', () => {
     const result = parseQueryLine(':base --target=:outdated --view=count');
-    expect(result).toEqual({
+    assert.deepStrictEqual(result, {
       selector: ':base',
       flags: ['--target=:outdated', '--view=count'],
       target: ':outdated',
@@ -65,15 +64,15 @@ describe('parseQueries', () => {
     `;
 
     const result = parseQueries(input);
-    expect(result).toHaveLength(3);
-    expect(result[0].selector).toBe(':malware');
-    expect(result[1].selector).toBe(':outdated');
-    expect(result[2].selector).toBe('*:license(copyleft)');
+    assert.strictEqual(result.length, 3);
+    assert.strictEqual(result[0].selector, ':malware');
+    assert.strictEqual(result[1].selector, ':outdated');
+    assert.strictEqual(result[2].selector, '*:license(copyleft)');
   });
 
   it('should handle empty input', () => {
-    expect(parseQueries('')).toEqual([]);
-    expect(parseQueries('   \n\n   ')).toEqual([]);
+    assert.deepStrictEqual(parseQueries(''), []);
+    assert.deepStrictEqual(parseQueries('   \n\n   '), []);
   });
 
   it('should skip comments and empty lines', () => {
@@ -88,7 +87,7 @@ describe('parseQueries', () => {
     `;
 
     const result = parseQueries(input);
-    expect(result).toHaveLength(2);
+    assert.strictEqual(result.length, 2);
   });
 });
 
@@ -102,7 +101,7 @@ describe('parseSingleQuery', () => {
       undefined
     );
 
-    expect(result).toEqual({
+    assert.deepStrictEqual(result, {
       selector: ':malware',
       flags: ['--expect-results=0', '--view=json', '--scope=:root > *'],
       expectResults: '0',
@@ -120,7 +119,7 @@ describe('parseSingleQuery', () => {
       ':outdated'
     );
 
-    expect(result).toEqual({
+    assert.deepStrictEqual(result, {
       selector: ':outdated',
       flags: [],
     });
@@ -128,7 +127,7 @@ describe('parseSingleQuery', () => {
 
   it('should handle minimal input', () => {
     const result = parseSingleQuery(':malware');
-    expect(result).toEqual({
+    assert.deepStrictEqual(result, {
       selector: ':malware',
       flags: [],
     });
@@ -144,7 +143,7 @@ describe('validateQuery', () => {
     };
 
     const errors = validateQuery(query);
-    expect(errors).toEqual([]);
+    assert.deepStrictEqual(errors, []);
   });
 
   it('should reject empty selector', () => {
@@ -154,7 +153,7 @@ describe('validateQuery', () => {
     };
 
     const errors = validateQuery(query);
-    expect(errors).toContain('Query selector cannot be empty');
+    assert.ok(errors.includes('Query selector cannot be empty'));
   });
 
   it('should reject invalid view', () => {
@@ -165,6 +164,6 @@ describe('validateQuery', () => {
     };
 
     const errors = validateQuery(query);
-    expect(errors).toContain('Invalid view format: invalid. Must be one of: human, json, mermaid, count');
+    assert.ok(errors.includes('Invalid view format: invalid. Must be one of: human, json, mermaid, count'));
   });
 });
