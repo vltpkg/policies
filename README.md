@@ -1,4 +1,4 @@
-# Policies
+# Dependency Policies
 
 A GitHub Action for enforcing dependency policies with vlt. Gate your CI pipeline by checking for malware, outdated packages, license compliance, and more using powerful CSS-like selectors.
 
