@@ -16,6 +16,21 @@ confirm() {
   [[ "$ans" =~ ^[Yy]$ ]] || { dim "aborted."; exit 0; }
 }
 
+# --- flags ------------------------------------------------------------------
+
+FORCE=false
+for arg in "$@"; do
+  case "$arg" in
+    -f|--force) FORCE=true ;;
+    -h|--help)
+      echo "usage: release.sh [--force]"
+      echo "  -f, --force   replace an existing tag/release instead of failing"
+      exit 0
+      ;;
+    *) die "unknown flag: $arg" ;;
+  esac
+done
+
 # --- preflight checks -------------------------------------------------------
 
 command -v gh  >/dev/null 2>&1 || die "gh cli is required (https://cli.github.com)"
@@ -43,7 +58,11 @@ TAG="v${VERSION}"
 MAJOR="v$(echo "$VERSION" | cut -d. -f1)"
 
 if git rev-parse "$TAG" >/dev/null 2>&1; then
-  die "tag '$TAG' already exists"
+  if [[ "$FORCE" == true ]]; then
+    bold "tag '$TAG' exists — will be replaced (--force)"
+  else
+    die "tag '$TAG' already exists (use --force to replace)"
+  fi
 fi
 
 # --- build ------------------------------------------------------------------
@@ -75,6 +94,13 @@ fi
 confirm "create release $TAG?"
 
 # --- tag & release ----------------------------------------------------------
+
+if [[ "$FORCE" == true ]] && git rev-parse "$TAG" >/dev/null 2>&1; then
+  bold "deleting existing release & tag $TAG..."
+  gh release delete "$TAG" --yes --cleanup-tag 2>/dev/null || true
+  git tag -d "$TAG" 2>/dev/null || true
+  git push origin ":refs/tags/$TAG" 2>/dev/null || true
+fi
 
 bold "creating tag $TAG..."
 git tag -a "$TAG" -m "Release $VERSION"
